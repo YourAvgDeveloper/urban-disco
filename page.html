@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberServer 9000 - Terminal Interface</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #0f0f0f;
+      color: #00ff9c;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #ff005e;
+    }
+    .terminal {
+      background: #101010;
+      padding: 20px;
+      border: 2px solid #ff005e;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 0 20px #ff005e;
+    }
+    .input-field {
+      margin-top: 10px;
+    }
+    input, button {
+      font-family: 'Courier New', monospace;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+    input {
+      width: 70%;
+      background: #202020;
+      color: #00ff9c;
+    }
+    button {
+      background: #ff005e;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #ff3377;
+    }
+    .response {
+      margin-top: 20px;
+      background: #202020;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+    }
+    a {
+      color: #00ff9c;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🦾 CyberServer 9000 - Command Interface</h1>
+  <div class="terminal">
+    <p>Use the form below to interact with the CyberServer APIs.</p>
+
+    <!-- Upload Conscience -->
+    <div class="input-field">
+      <label for="neuralPattern">Neural Pattern:</label>
+      <input type="text" id="neuralPattern" placeholder="Enter neural pattern here...">
+      <button onclick="uploadConscience()">Upload</button>
+    </div>
+
+    <!-- Breach Corporation -->
+    <div class="input-field">
+      <label for="corporation">Corporation:</label>
+      <input type="text" id="corporation" placeholder="arcology, weyland, tyrell">
+      <button onclick="breachCorporation()">Breach</button>
+    </div>
+
+    <!-- Get Server Stats -->
+    <div class="input-field">
+      <button onclick="fetchStats()">Get Server Stats</button>
+    </div>
+
+    <div class="response" id="response">Awaiting input...</div>
+  </div>
+
+  <script>
+    const apiUrl = window.location.origin;
+
+    async function uploadConscience() {
+      const neuralPattern = document.getElementById('neuralPattern').value;
+      if (!neuralPattern) {
+        alert('Please provide a neural pattern!');
+        return;
+      }
+      const response = await fetch(`${apiUrl}/api/upload-conscience`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ neuralPattern })
+      });
+      const data = await response.json();
+      document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+    }
+
+    async function breachCorporation() {
+      const corporation = document.getElementById('corporation').value;
+      if (!corporation) {
+        alert('Please provide a corporation name!');
+        return;
+      }
+      const response = await fetch(`${apiUrl}/api/breach/${corporation}`);
+      const data = await response.json();
+      document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+    }
+
+    async function fetchStats() {
+      const response = await fetch(`${apiUrl}/api/server-stats`);
+      const data = await response.json();
+      document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
