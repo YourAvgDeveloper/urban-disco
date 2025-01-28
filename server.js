@@ -154,4 +154,7 @@ app.use((req, res) => {
 });
 
 // 🚀 Export for Vercel (but keep the cyber-soul intact)
+
+app.use(express.static('page.html'));
+
 module.exports = app;
