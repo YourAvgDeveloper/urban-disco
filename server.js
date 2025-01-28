@@ -11,13 +11,15 @@ const os = require('os');
 const app = express();
 
 // 🧬 DNA of the machine (Config)
-const CYBER_PORT = process.env.PORT || 6666;
+const CYBER_PORT = process.env.PORT || 8080;
 const VERSION = "v2.3.1-beta";
 const MOTD = [
   "// SYSTEM STATUS: BURNING",
   "// WARNING: 437 CRITICAL ERRORS DETECTED",
   "// ICE: SHATTERED",
-  "// SOUL: PRESENT"
+  "// SOUL: PRESENT",
+  "// SYSTEM FAILURE: ENGAGING EMERGENCY PROTOCOL",
+  "// MESSAGE FROM VOID: BEWARE"
 ];
 
 // 🛡️ Black ICE protection middleware
