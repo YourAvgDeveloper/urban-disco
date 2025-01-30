@@ -8,6 +8,99 @@ const os = require('os');
 
 const app = express();
 
+const loreDatabase = {
+  corporations: [
+    {
+      id: "arcology",
+      name: "Arcology Systems",
+      description: "Masters of urban AI infrastructure",
+      threatLevel: "High",
+      ice: "Black ICE Detected ❄️",
+      breachDifficulty: 98
+    },
+    {
+      id: "weyland",
+      name: "Weyland Industries",
+      description: "Biotech and genetic engineering giants",
+      threatLevel: "Extreme",
+      ice: "AI Sentry Online 🤖",
+      breachDifficulty: 85
+    },
+    {
+      id: "tyrell",
+      name: "Tyrell Nexus",
+      description: "Neural network overlords",
+      threatLevel: "Critical",
+      ice: "VOID-LOCK ACTIVE 🚨",
+      breachDifficulty: 110
+    },
+    // New corporations
+    {
+      id: "nightcorp",
+      name: "NightCorp Solutions",
+      description: "Black market data brokers",
+      threatLevel: "Medium",
+      ice: "Spider ICE Crawling 🕷️",
+      breachDifficulty: 75
+    },
+    {
+      id: "neuraLink",
+      name: "NeuraLink Co.",
+      description: "Brain-machine interface specialists",
+      threatLevel: "High",
+      ice: "NeuroFirewall Active 🧠",
+      breachDifficulty: 90
+    },
+    {
+      id: "vortex",
+      name: "Vortex Unlimited",
+      description: "Quantum computing monopolists",
+      threatLevel: "Extreme",
+      ice: "Quantum Encryption 🔒",
+      breachDifficulty: 105
+    }
+  ],
+  factions: [
+    {
+      id: "netrunners",
+      name: "Netrunners Collective",
+      description: "Decentralized hacker alliance",
+      threatLevel: "Moderate"
+    },
+    {
+      id: "corpo-elite",
+      name: "Corporate Elite",
+      description: "Megacorp ruling class",
+      threatLevel: "High"
+    },
+    // New factions
+    {
+      id: "neon-syndicate",
+      name: "The Neon Syndicate",
+      description: "Underground tech smugglers",
+      threatLevel: "High"
+    },
+    {
+      id: "ghost-cartel",
+      name: "The Ghost Cartel",
+      description: "Cybernetic black market lords",
+      threatLevel: "Extreme"
+    },
+    {
+      id: "zero-zone",
+      name: "The Zero Zone Collective",
+      description: "Anti-AI resistance group",
+      threatLevel: "Medium"
+    }
+  ],
+  messages: [
+    "The city never sleeps... neither do we",
+    "Neural firewall breach detected",
+    "ICE cracking in progress",
+    "Warning: System intrusion detected"
+  ]
+};
+
 // 🛡️ Serve static files from the "public" folder (for CSS/JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -44,7 +137,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // 🎮 Root Route: Serve HTML or ASCII based on client type
-app.get('/', (req, res) => {
+app.get('/ascii', (req, res) => {
   const userAgent = req.get('User-Agent') || '';
   
   // Detect curl/Wget/CLI tools
@@ -83,14 +176,20 @@ app.post('/api/upload-conscience', (req, res) => {
 
 // 🕶️ Hacking simulator
 app.get('/api/breach/:corporation', (req, res) => {
-  const corps = {
-    'arcology': { diff: 98, ice: 'Black ICE Detected ❄️' },
-    'weyland': { diff: 85, ice: 'AI Sentry Online 🤖' },
-    'tyrell': { diff: 110, ice: 'VOID-LOCK ACTIVE 🚨' }
-  };
+  const corps = loreDatabase.corporations.reduce((acc, corp) => {
+    acc[corp.id] = {
+      diff: corp.breachDifficulty,
+      ice: corp.ice,
+      name: corp.name
+    };
+    return acc;
+  }, {});
 
   const target = corps[req.params.corporation];
-  if (!target) return res.status(404).json({ error: "CORP NOT FOUND IN DATAFORT 🔍" });
+  if (!target) return res.status(404).json({ 
+    error: "CORP NOT FOUND IN DATAFORT 🔍",
+    suggestion: "Try /api/lore/corporations for targets"
+  });
 
   let progress = 0;
   const breachAttempt = setInterval(() => {
@@ -102,6 +201,7 @@ app.get('/api/breach/:corporation', (req, res) => {
       process.stdout.write('\n');
       res.json({
         status: "DATASTREAM COMPROMISED 💾",
+        corporation: target.name,
         iceStatus: target.ice,
         reward: Math.random() * 10000 + ' credits 💰'
       });
@@ -114,6 +214,39 @@ app.get('/api/breach/:corporation', (req, res) => {
       });
     }
   }, 300);
+});
+
+// ======================
+// 🧬 LORE ENDPOINTS
+// ======================
+app.get('/api/lore/corporations', (req, res) => {
+  res.json(loreDatabase.corporations.map(corp => ({
+    id: corp.id,
+    name: corp.name,
+    threatLevel: corp.threatLevel,
+    breachDifficulty: corp.breachDifficulty
+  })));
+});
+
+app.get('/api/lore/corporations/:id', (req, res) => {
+  const corporation = loreDatabase.corporations.find(c => c.id === req.params.id);
+  if (!corporation) return res.status(404).json({ error: "CORP NOT FOUND" });
+  res.json(corporation);
+});
+
+app.get('/api/lore/factions', (req, res) => {
+  res.json(loreDatabase.factions);
+});
+
+app.get('/api/lore/factions/:id', (req, res) => {
+  const faction = loreDatabase.factions.find(f => f.id === req.params.id);
+  if (!faction) return res.status(404).json({ error: "FACTION NOT FOUND" });
+  res.json(faction);
+});
+
+app.get('/api/lore/random-message', (req, res) => {
+  const msg = loreDatabase.messages[Math.floor(Math.random() * loreDatabase.messages.length)];
+  res.json({ message: msg, glitch: Math.random().toString(36).substring(7) });
 });
 
 // 🌌 Quantum server stats
@@ -150,12 +283,6 @@ app.use((req, res) => {
     The digital winds howl through empty corridors...
     Perhaps you should check your map? 🗺️
     
-    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-    ░░░░░▄▄▄▄▄▄▄░░░░░░░░▄░░░░░░░░░░░
-    ░░░░█▀▀▀▀▀▀▀█▄▄▄░░░░█░░░░░░░░░░░
-    ░░░░█░░░░░░░█░░█▄▄▄█▀▀▀█▄░░░░░░░
-    ░░░░▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█▄░░░░░░
-    ░░░░░░░░░░░░░░░░░░░░░░░░░▀█░░░░
   `);
 });
 
