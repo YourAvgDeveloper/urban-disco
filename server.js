@@ -1,14 +1,15 @@
-// 🦾 CyberServer 9000 - Vercel Edition (Fully Armed)
-// 🔥 Equipped with illegal mods and a soul of glowing code
-// 📡 Transmission encrypted with 0.0004% chance of survival
-
+// 🦾 CyberServer 9000 - Vercel Edition
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 const os = require('os');
 
 const app = express();
+
+// 🛡️ Serve static files from the "public" folder (for CSS/JS)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // 🧬 DNA of the machine (Config)
 const CYBER_PORT = process.env.PORT || 8080;
@@ -42,15 +43,14 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// 🖥️ Terminal middleware
-app.use((req, _, next) => {
-  console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.path}`);
-  next();
-});
-
-// 🎮 Mainframe routes
+// 🎮 Root Route: Serve HTML or ASCII based on client type
 app.get('/', (req, res) => {
-  const asciiArt = `
+  // Check if the client accepts HTML (browser)
+  if (req.accepts('html')) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  } else {
+    // Serve ASCII art to non-browser clients (curl, scripts, etc.)
+      const asciiArt = `
 
  ____ _  _ ____  _____ _____   __ _____ _____ __ __ _____ _____ -9000
 ((    \\// ||=)  ||==  ||_//  ((  ||==  ||_// \\ // ||==  ||_//      
@@ -58,7 +58,8 @@ app.get('/', (req, res) => {
                                                                                                                                                                                      
     ${VERSION} | ${MOTD[Math.floor(Math.random() * MOTD.length)]}
   `;
-  res.type('text/plain').send(asciiArt);
+    res.type('text/plain').send(asciiArt);
+  }
 });
 
 // 🧠 AI Core Interface
@@ -157,5 +158,7 @@ app.use((req, res) => {
   `);
 });
 
-// 🚀 Export for Vercel (but keep the cyber-soul intact)
+app.use((err, req, res, _) => { /* ... */ });
+app.use((req, res) => { /* ... */ });
+
 module.exports = app;
