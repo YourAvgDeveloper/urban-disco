@@ -45,20 +45,21 @@ app.use(limiter);
 
 // 🎮 Root Route: Serve HTML or ASCII based on client type
 app.get('/', (req, res) => {
-  // Check if the client accepts HTML (browser)
-  if (req.accepts('html')) {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  } else {
-    // Serve ASCII art to non-browser clients (curl, scripts, etc.)
-      const asciiArt = `
-
+  const userAgent = req.get('User-Agent') || '';
+  
+  // Detect curl/Wget/CLI tools
+  if (userAgent.includes('curl') || userAgent.includes('Wget')) {
+    const asciiArt = `
  ____ _  _ ____  _____ _____   __ _____ _____ __ __ _____ _____ -9000
 ((    \\// ||=)  ||==  ||_//  ((  ||==  ||_// \\ // ||==  ||_//      
  \\__  //  ||_)) ||___ || \\ \_)) ||___ || \\  \V/  ||___ || \\      
                                                                                                                                                                                      
     ${VERSION} | ${MOTD[Math.floor(Math.random() * MOTD.length)]}
-  `;
+    `;
     res.type('text/plain').send(asciiArt);
+  } else {
+    // Serve HTML to browsers
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
   }
 });
 
