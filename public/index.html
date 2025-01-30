@@ -1,88 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
-  <meta name="description" content="You've entered the neural network of the CyberServer 9000. This is the gateway to a world of digital chaos, where data flows like neon rivers through the cybervoid. Below, you'll find the available API endpoints to interact with the system. Use them wisely, hacker.">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberServer 9000</title>
+  <title>CyberServer 9000 Interface</title>
   <style>
+    :root {
+      --neon-green: #00ff00;
+      --cyber-purple: #bc13fe;
+      --matrix-black: #0a0a0a;
+    }
+
     body {
-      background: #0a0a0a;
-      color: #00ff00;
-      font-family: 'Courier New', Courier, monospace;
+      background: var(--matrix-black);
+      color: var(--neon-green);
+      font-family: 'Courier New', monospace;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       line-height: 1.6;
     }
-    header {
+
+    .glitch-container {
       background: #111;
-      padding: 20px;
-      text-align: center;
-      border-bottom: 2px solid #00ff00;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-      text-shadow: 0 0 5px #00ff00;
-    }
-    .container {
-      max-width: 800px;
+      border: 1px solid var(--neon-green);
+      box-shadow: 0 0 15px var(--neon-green);
       margin: 20px auto;
+      max-width: 800px;
       padding: 20px;
-      background: #111;
-      border: 1px solid #00ff00;
-      box-shadow: 0 0 10px #00ff00;
+      position: relative;
     }
-    h2 {
-      color: #00ff00;
-      text-shadow: 0 0 5px #00ff00;
-      border-bottom: 1px solid #00ff00;
-      padding-bottom: 10px;
+
+    .glitch-container::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, 
+        var(--neon-green), 
+        var(--cyber-purple), 
+        transparent 70%);
+      z-index: -1;
+      animation: scanline 3s linear infinite;
     }
+
+    @keyframes scanline {
+      0% { opacity: 0.3; }
+      50% { opacity: 0.1; }
+      100% { opacity: 0.3; }
+    }
+
+    h1, h2 {
+      text-shadow: 0 0 5px var(--neon-green);
+      border-bottom: 1px solid var(--neon-green);
+    }
+
     .endpoint {
       background: #1a1a1a;
+      margin: 15px 0;
       padding: 15px;
+      border-left: 3px solid var(--cyber-purple);
+    }
+
+    code {
+      color: var(--cyber-purple);
+      display: block;
       margin: 10px 0;
-      border-left: 5px solid #00ff00;
     }
-    .endpoint h3 {
-      margin: 0;
-      color: #00ff00;
+
+    button {
+      background: #2a2a2a;
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
     }
-    .endpoint p {
-      margin: 5px 0;
-      color: #ccc;
+
+    button:hover {
+      background: var(--neon-green);
+      color: #000;
     }
-    footer {
-      text-align: center;
-      margin-top: 20px;
+
+    #output {
+      border: 1px dashed var(--neon-green);
+      min-height: 100px;
       padding: 10px;
-      background: #111;
-      border-top: 2px solid #00ff00;
-    }
-    a {
-      color: #00ff00;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>CyberServer 9000</h1>
-    <p>// SYSTEM STATUS: OPERATIONAL</p>
-  </header>
+  <div class="glitch-container">
+    <h1>⏣ CyberServer 9000 Neural Interface</h1>
 
-  <div class="container">
-    <h2> \\ Welcome to the CyberServer 9000 // </h2>
-    <p>
-      You've entered the neural network of the CyberServer 9000. This is the gateway to a world of digital chaos, where data flows like neon rivers through the cybervoid. Below, you'll find the available API endpoints to interact with the system. Use them wisely, hacker.
-    </p>
-
-    <h2>API Endpoints</h2>
+        <h2>API Endpoints</h2>
     <div class="endpoint">
       <h3>📡 Root Endpoint</h3>
       <p>Access the mainframe and get a glimpse of the system's soul.</p>
@@ -96,26 +109,229 @@
     </div>
 
     <div class="endpoint">
-      <h3>🕶️ Breach Corporation</h3>
-      <p>Attempt to hack into a corporate datastream. Choose your target wisely.</p>
-      <code>GET /api/breach/:corporation</code>
-    </div>
-
-    <div class="endpoint">
       <h3>🌌 Server Stats</h3>
       <p>Retrieve real-time quantum server metrics. Do not trust the numbers.</p>
       <code>GET /api/server-stats</code>
     </div>
+    
+    <div class="endpoint">
+      <h2>🕶️ Hacking Endpoints</h2>
+      <code>GET /api/breach/:corporation</code>
+      <p>Available corps: arcology, weyland, tyrell, nightcorp, neuraLink, vortex</p>
+      <button onclick="testBreach('nightcorp')">Test NightCorp Breach</button>
+    </div>
 
-    <h2>Warning</h2>
+    <div class="endpoint">
+      <h2>🧬 Corporate Lore</h2>
+      <code>GET /api/lore/corporations</code>
+      <code>GET /api/lore/corporations/:id</code>
+      <button onclick="fetchCorporations()">List Corporations</button>
+      <div id="corp-list"></div>
+    </div>
+
+    <div class="endpoint">
+      <h2>🌐 Faction Network</h2>
+      <code>GET /api/lore/factions</code>
+      <code>GET /api/lore/factions/:id</code>
+      <button onclick="fetchFactions()">List Factions</button>
+      <div id="faction-list"></div>
+    </div>
+
+    <div class="endpoint">
+      <h2>📡 System Messages</h2>
+      <code>GET /api/lore/random-message</code>
+      <button onclick="getRandomMessage()">Get Message</button>
+      <p id="random-message"></p>
+    </div>
+
+    <div id="output"></div>
+  </div>
+
+  <div class="terminal-container">
+  <div id="terminal-output"></div>
+  <div class="terminal-input">
+    <span class="prompt">root@cyberserver:~$ </span>
+    <input type="text" id="command-input" autocomplete="off">
+  </div>
+</div>
+
+<style>
+  .terminal-container {
+    background: #000;
+    border: 2px solid #00ff00;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    max-width: 800px;
+    margin: 20px auto;
+  }
+
+  #terminal-output {
+    color: #00ff00;
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #00ff00;
+    padding-bottom: 10px;
+  }
+
+  .terminal-input {
+    display: flex;
+    align-items: center;
+  }
+
+  .prompt {
+    color: #00ff00;
+    margin-right: 10px;
+  }
+
+  #command-input {
+    background: transparent;
+    border: none;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    width: 100%;
+    outline: none;
+  }
+
+  .command-history {
+    opacity: 0.7;
+  }
+</style>
+
+<script>
+  const commandHistory = [];
+  let historyIndex = -1;
+
+  const terminal = {
+    output: document.getElementById('terminal-output'),
+    input: document.getElementById('command-input'),
+    
+    print: (text, className = '') => {
+      const line = document.createElement('div');
+      line.textContent = text;
+      if(className) line.className = className;
+      terminal.output.appendChild(line);
+      terminal.output.scrollTop = terminal.output.scrollHeight;
+    },
+
+    execute: async (command) => {
+      terminal.print(`> ${command}`, 'command-history');
+      
+      const [cmd, ...args] = command.split(' ');
+      
+      try {
+        switch(cmd.toLowerCase()) {
+          case 'breach':
+            if(!args[0]) throw new Error('Specify corporation');
+            const response = await fetch(`/api/breach/${args[0]}`);
+            const data = await response.json();
+            terminal.print(JSON.stringify(data, null, 2));
+            break;
+
+          case 'corp-info':
+            const corpResponse = await fetch(`/api/lore/corporations/${args[0]}`);
+            const corpData = await corpResponse.json();
+            terminal.print(`Corporation: ${corpData.name}`);
+            terminal.print(`Threat Level: ${corpData.threatLevel}`);
+            break;
+
+          case 'clear':
+            terminal.output.innerHTML = '';
+            break;
+
+          case 'help':
+            terminal.print('Available commands:');
+            terminal.print('breach [corporation] - Attempt system breach');
+            terminal.print('corp-info [id] - Get corporation details');
+            terminal.print('clear - Reset terminal');
+            terminal.print('help - Show this message');
+            break;
+
+          default:
+            throw new Error(`Unknown command: ${cmd}`);
+        }
+      } catch(error) {
+        terminal.print(`ERROR: ${error.message}`);
+      }
+    }
+  };
+
+  // Input handling
+  terminal.input.addEventListener('keyup', (e) => {
+    if(e.key === 'Enter') {
+      if(terminal.input.value.trim()) {
+        commandHistory.push(terminal.input.value);
+        historyIndex = commandHistory.length;
+        terminal.execute(terminal.input.value);
+        terminal.input.value = '';
+      }
+    }
+
+    // Arrow key history
+    if(e.key === 'ArrowUp') {
+      historyIndex = Math.max(historyIndex - 1, 0);
+      terminal.input.value = commandHistory[historyIndex] || '';
+    }
+    if(e.key === 'ArrowDown') {
+      historyIndex = Math.min(historyIndex + 1, commandHistory.length);
+      terminal.input.value = commandHistory[historyIndex] || '';
+    }
+  });
+
+  // Initial message
+  terminal.print('CyberTerminal v9.4.2 - Type "help" for commands');
+  terminal.print('WARNING: Unauthorized access will be traced');
+</script>
+
+  <script>
+    async function testBreach(corp) {
+      try {
+        const response = await fetch(`/api/breach/${corp}`);
+        const data = await response.json();
+        outputResult(data);
+      } catch (error) {
+        outputResult({ error: "BREACH FAILED", details: error });
+      }
+    }
+
+    async function fetchCorporations() {
+      const response = await fetch('/api/lore/corporations');
+      const corps = await response.json();
+      document.getElementById('corp-list').innerHTML = corps
+        .map(c => `<p>${c.name} (${c.threatLevel}) - Breach Diff: ${c.breachDifficulty}</p>`)
+        .join('');
+    }
+
+    async function fetchFactions() {
+      const response = await fetch('/api/lore/factions');
+      const factions = await response.json();
+      document.getElementById('faction-list').innerHTML = factions
+        .map(f => `<p>${f.name} - Threat: ${f.threatLevel}</p>`)
+        .join('');
+    }
+
+    async function getRandomMessage() {
+      const response = await fetch('/api/lore/random-message');
+      const { message } = await response.json();
+      document.getElementById('random-message').textContent = `📡 ${message}`;
+    }
+
+    function outputResult(data) {
+      const output = document.getElementById('output');
+      output.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      output.style.borderColor = data.error ? '#ff0000' : '#00ff00';
+    }
+  </script>
+  <h2>Warning</h2>
     <p>
       The CyberServer 9000 is a volatile system. Use the API at your own risk. Unauthorized access will result in immediate neural disconnection.
       <a href="https://github.com/YourAvgDeveloper/urban-disco">Contribute to me!</a>
     </p>
   </div>
-
   <footer>
     <p> \\ © 2025 CyberServer9K. All rights reserved. //</p>
   </footer>
+</body>
+</html>
 </body>
 </html>
