@@ -200,6 +200,57 @@
   }
 </style>
 
+<div class="terminal-container">
+  <div id="terminal-output"></div>
+  <div class="terminal-input">
+    <span class="prompt">root@cyberserver:~$ </span>
+    <input type="text" id="command-input" autocomplete="off">
+  </div>
+</div>
+
+<style>
+  .terminal-container {
+    background: #000;
+    border: 2px solid #00ff00;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    max-width: 800px;
+    margin: 20px auto;
+  }
+
+  #terminal-output {
+    color: #00ff00;
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #00ff00;
+    padding-bottom: 10px;
+  }
+
+  .terminal-input {
+    display: flex;
+    align-items: center;
+  }
+
+  .prompt {
+    color: #00ff00;
+    margin-right: 10px;
+  }
+
+  #command-input {
+    background: transparent;
+    border: none;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    width: 100%;
+    outline: none;
+  }
+
+  .command-history {
+    opacity: 0.7;
+  }
+</style>
+
 <script>
   const commandHistory = [];
   let historyIndex = -1;
@@ -249,6 +300,25 @@
             terminal.print('help - Show this message');
             break;
 
+          case 'ls':
+            terminal.print('Available corporations:');
+            const corpsResponse = await fetch('/api/lore/corporations');
+            const corps = await corpsResponse.json();
+            corps.forEach(corp => terminal.print(`- ${corp.name}`));
+            break;
+
+          case 'echo':
+            terminal.print(args.join(' '));
+            break;
+
+          case 'whoami':
+            terminal.print('root (admin)');
+            break;
+
+          case 'date':
+            terminal.print(new Date().toLocaleString());
+            break;
+
           default:
             throw new Error(`Unknown command: ${cmd}`);
         }
@@ -284,46 +354,6 @@
   terminal.print('CyberTerminal v9.4.2 - Type "help" for commands');
   terminal.print('WARNING: Unauthorized access will be traced');
 </script>
-
-  <script>
-    async function testBreach(corp) {
-      try {
-        const response = await fetch(`/api/breach/${corp}`);
-        const data = await response.json();
-        outputResult(data);
-      } catch (error) {
-        outputResult({ error: "BREACH FAILED", details: error });
-      }
-    }
-
-    async function fetchCorporations() {
-      const response = await fetch('/api/lore/corporations');
-      const corps = await response.json();
-      document.getElementById('corp-list').innerHTML = corps
-        .map(c => `<p>${c.name} (${c.threatLevel}) - Breach Diff: ${c.breachDifficulty}</p>`)
-        .join('');
-    }
-
-    async function fetchFactions() {
-      const response = await fetch('/api/lore/factions');
-      const factions = await response.json();
-      document.getElementById('faction-list').innerHTML = factions
-        .map(f => `<p>${f.name} - Threat: ${f.threatLevel}</p>`)
-        .join('');
-    }
-
-    async function getRandomMessage() {
-      const response = await fetch('/api/lore/random-message');
-      const { message } = await response.json();
-      document.getElementById('random-message').textContent = `📡 ${message}`;
-    }
-
-    function outputResult(data) {
-      const output = document.getElementById('output');
-      output.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-      output.style.borderColor = data.error ? '#ff0000' : '#00ff00';
-    }
-  </script>
   <h2>Warning</h2>
     <p>
       The CyberServer 9000 is a volatile system. Use the API at your own risk. Unauthorized access will result in immediate neural disconnection.
