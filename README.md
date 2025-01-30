@@ -1,2 +1,2 @@
 # urban-disco
-priv repo for personal use
+Just a project by me, visit at https://cs9k.vercel.app
