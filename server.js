@@ -249,6 +249,118 @@ app.get('/api/lore/random-message', (req, res) => {
   res.json({ message: msg, glitch: Math.random().toString(36).substring(7) });
 });
 
+// ======================
+// 🌌 SERVICE ENDPOINTS
+// ======================
+app.get('/api/service', (req, res) => {
+  res.json({
+    services: [
+      {
+        name: "matrix",
+        description: "Neural Matrix simulation stream",
+        endpoint: "/api/service/matrix",
+        warning: "Don't stare too long"
+      },
+      {
+        name: "bitcoin-miner",
+        description: "Fake cryptocurrency mining simulation",
+        endpoint: "/api/service/bitcoin-miner"
+      },
+      {
+        name: "neuro-sync",
+        description: "Neural network training simulation",
+        endpoint: "/api/service/neuro-sync"
+      }
+    ]
+  });
+});
+
+// 🔮 Matrix Animation Stream
+app.get('/api/service/matrix', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('X-Stream-Warning', 'Simulation only - no real access');
+  
+  const chars = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const columns = process.stdout.columns || 80;
+  let running = true;
+
+  // Safety timeout
+  const timeout = setTimeout(() => {
+    running = false;
+    res.end();
+  }, 30000); // 30-second limit
+
+  const generateFrame = () => {
+    if (!running) return;
+    
+    let output = '';
+    for (let i = 0; i < columns; i++) {
+      output += Math.random() > 0.02 ? 
+        `\x1b[32m${chars[Math.floor(Math.random() * chars.length)]}\x1b[0m` : 
+        ' ';
+    }
+    
+    res.write(`\x1b[2J\x1b[H${output}`); // ANSI escape codes
+    setTimeout(generateFrame, 50);
+  };
+
+  req.on('close', () => {
+    running = false;
+    clearTimeout(timeout);
+  });
+
+  generateFrame();
+});
+
+// ⚡ Fake Bitcoin Miner
+app.get('/api/service/bitcoin-miner', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  let hashes = 0;
+
+  const interval = setInterval(() => {
+    hashes += Math.floor(Math.random() * 1000);
+    res.write(`Mining... ${hashes} hashes computed\n`);
+    
+    if (hashes >= 10000) {
+      clearInterval(interval);
+      res.end("Block mined! (simulation ended)");
+    }
+  }, 100);
+
+  req.on('close', () => clearInterval(interval));
+});
+
+// 🧠 Neural Sync Simulation
+app.get('/api/service/neuro-sync', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  const phases = [
+    "Initializing cortex link",
+    "Uploading neural patterns",
+    "Synchronizing hemispheres",
+    "Calibrating dopamine levels",
+    "Optimizing neuro pathways"
+  ];
+
+  let phaseIndex = 0;
+  const interval = setInterval(() => {
+    if (phaseIndex >= phases.length) {
+      clearInterval(interval);
+      res.end("SYNC COMPLETE");
+      return;
+    }
+
+    const progress = Math.min(100, phaseIndex * 25 + Math.random() * 25);
+    res.write(
+      `[${phases[phaseIndex]}] ${progress.toFixed(2)}%` +
+      ` [${'█'.repeat(Math.floor(progress/5))}]\n`
+    );
+    
+    phaseIndex++;
+  }, 2000);
+
+  req.on('close', () => clearInterval(interval));
+});
+
 // 🌌 Quantum server stats
 app.get('/api/server-stats', (req, res) => {
   const stats = {
